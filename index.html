@@ -213,6 +213,18 @@ tr.rank1 td:first-child{border-left:4px solid var(--gold)}
 #pin-msg{margin-top:14px}
 #pin-msg .notice{margin-bottom:0;text-align:left}
 
+/* Iragarpenak: lista de participantes */
+.chips{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:18px}
+.chip{
+  appearance:none;border:2px solid var(--line2);background:#fff;color:var(--ink);
+  border-radius:999px;padding:9px 16px;font-size:14px;font-weight:600;cursor:pointer;
+  font-family:'Fredoka',sans-serif;transition:.13s;box-shadow:0 3px 0 rgba(0,0,0,.08);
+}
+.chip:hover{transform:translateY(-1px);border-color:var(--grape)}
+.chip.active{background:var(--grape);color:#fff;border-color:var(--grape);box-shadow:0 3px 0 rgba(0,0,0,.18)}
+.ver-title{font-family:'Fredoka';font-size:19px;color:var(--grape);margin:4px 0 14px;text-transform:none;letter-spacing:0}
+.ver-hint{color:var(--muted);font-size:13px;margin:0 0 16px}
+
 footer{color:var(--muted);font-size:12px;text-align:center;padding:28px 20px;border-top:1px solid var(--line);margin-top:30px}
 
 @media (max-width:640px){
@@ -233,6 +245,7 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding:28px 20px;bor
     <button class="tab active" data-view="pronostico">Nire iragarpena</button>
     <button class="tab" data-view="resultados">Emaitzak (admin)</button>
     <button class="tab" data-view="clasificacion">Sailkapena</button>
+    <button class="tab" data-view="iragarpenak">Iragarpenak</button>
   </nav>
 </header>
 
@@ -296,6 +309,17 @@ footer{color:var(--muted);font-size:12px;text-align:center;padding:28px 20px;bor
     </div>
     <div id="clasif-content">
       <div class="empty-state">Sakatu «Eguneratu sailkapena» emaitza ikusteko.</div>
+    </div>
+  </section>
+
+  <!-- ===================== IRAGARPENAK (ikusi) ===================== -->
+  <section class="view" id="view-iragarpenak">
+    <p class="ver-hint">Sakatu partaide baten izena bere iragarpen osoa ikusteko (irakurtzeko soilik).</p>
+    <div class="toolbar">
+      <button class="btn btn-primary" id="btn-ver-refresh">Eguneratu zerrenda</button>
+    </div>
+    <div id="ver-content">
+      <div class="empty-state">Kargatzen…</div>
     </div>
   </section>
 </main>
@@ -561,6 +585,7 @@ document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
   document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
   t.classList.add('active'); $('view-'+t.dataset.view).classList.add('active');
   if(t.dataset.view==='clasificacion') actualizar();
+  if(t.dataset.view==='iragarpenak') cargarParticipantes();
 });
 
 $('mode-notice').innerHTML = remote
@@ -674,6 +699,42 @@ async function actualizar(){
   box.innerHTML=html;
 }
 $('btn-actualizar').onclick=actualizar;
+
+/* ============================================================
+   8) IRAGARPENAK — partaide bakoitzaren koadroa ikusi (irakurtzeko)
+   ============================================================ */
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+let verData=[];
+async function cargarParticipantes(){
+  const cont=$('ver-content');
+  cont.innerHTML='<div class="empty-state">Kargatzen…</div>';
+  let data;
+  try{ data=await apiGet(); }
+  catch(e){ cont.innerHTML='<div class="notice danger">Ezin izan dira datuak irakurri.</div>'; return; }
+  verData=(data.predicciones||[]).slice().sort((a,b)=>String(a.nombre).localeCompare(String(b.nombre),'eu'));
+  if(verData.length===0){ cont.innerHTML='<div class="empty-state">Oraindik ez dago iragarpenik gordeta.</div>'; return; }
+  let html='<div class="chips" id="chips-part">';
+  verData.forEach((p,i)=>{ html+='<button class="chip" data-i="'+i+'">'+escapeHtml(p.nombre)+'</button>'; });
+  html+='</div><div id="ver-detalle"></div>';
+  cont.innerHTML=html;
+  cont.querySelectorAll('.chip').forEach(c=>c.onclick=()=>mostrarIragarpena(+c.dataset.i, c));
+  mostrarIragarpena(0, cont.querySelector('.chip')); // lehena erakutsi zuzenean
+}
+function mostrarIragarpena(i, chipEl){
+  document.querySelectorAll('#chips-part .chip').forEach(c=>c.classList.remove('active'));
+  if(chipEl) chipEl.classList.add('active');
+  const p=verData[i]; if(!p) return;
+  $('ver-detalle').innerHTML=
+      '<h3 class="ver-title">'+escapeHtml(p.nombre)+' · iragarpena</h3>'
+    + '<div class="bracket-wrap"><div class="bracket" id="bracket-ver"></div></div>'
+    + '<div class="podium" id="podium-ver"></div>';
+  const picks=p.picks||{};
+  renderBracket($('bracket-ver'), picks, false, ()=>{});   // irakurtzeko soilik
+  renderPodium($('podium-ver'), picks);
+}
+$('btn-ver-refresh').onclick=cargarParticipantes;
 
 // Hasiera (emaitzen koadroa desblokeatzean marrazten da)
 refreshPron();
