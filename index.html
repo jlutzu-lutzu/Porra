@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="eu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Munduko Kopako Porra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   ITXURA — tema "jaia / kolore biziak"
+   ============================================================ */
+:root{
+  --cream:#fff7ec;
+  --surface:#ffffff;
+  --ink:#2a1f37;
+  --muted:#7a6e88;
+  --line:rgba(42,31,55,.10);
+  --line2:rgba(42,31,55,.18);
+  --red:#ff4d6d;
+  --orange:#ff922b;
+  --yellow:#ffd43b;
+  --green:#19c37d;
+  --green-dim:rgba(25,195,125,.16);
+  --blue:#2ec5ff;
+  --grape:#8b5cf6;
+  --pink:#ff5fa2;
+  --gold:#f6b40a;
+  --gold-dim:rgba(246,180,10,.16);
+  --danger:#ff4d6d;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:
+    radial-gradient(700px 380px at 88% -8%, rgba(255,95,162,.18), transparent 60%),
+    radial-gradient(640px 360px at 4% 2%, rgba(46,197,255,.18), transparent 58%),
+    radial-gradient(820px 480px at 50% 120%, rgba(139,92,246,.14), transparent 60%),
+    var(--cream);
+  color:var(--ink);
+  min-height:100vh;
+  -webkit-text-size-adjust:100%;
+}
+h1,h2,h3,.round-name,.tab,.btn,.champ-card .lbl,.pos{font-family:'Fredoka',sans-serif;letter-spacing:.01em}
+
+/* Goiburua */
+header{
+  padding:20px 20px 12px;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(90deg,var(--red),var(--orange) 22%,var(--yellow) 42%,var(--green) 60%,var(--blue) 78%,var(--grape));
+  border-bottom:4px solid rgba(255,255,255,.5);
+}
+header::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:
+    radial-gradient(7px 7px at 12% 30%, rgba(255,255,255,.85), transparent 60%),
+    radial-gradient(5px 5px at 30% 70%, rgba(255,255,255,.7), transparent 60%),
+    radial-gradient(6px 6px at 68% 25%, rgba(255,255,255,.8), transparent 60%),
+    radial-gradient(4px 4px at 84% 65%, rgba(255,255,255,.7), transparent 60%),
+    radial-gradient(5px 5px at 52% 18%, rgba(255,255,255,.7), transparent 60%);
+}
+.brand{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;position:relative;z-index:1}
+.brand h1{
+  margin:0;font-size:32px;font-weight:700;text-transform:uppercase;color:#fff;
+  text-shadow:0 2px 0 rgba(0,0,0,.18), 0 0 14px rgba(0,0,0,.12);
+}
+.brand .sub{color:rgba(255,255,255,.95);font-size:13.5px;font-weight:600;text-shadow:0 1px 2px rgba(0,0,0,.25)}
+nav{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;position:relative;z-index:1}
+.tab{
+  appearance:none;border:none;background:rgba(255,255,255,.85);
+  color:var(--ink);padding:9px 18px;border-radius:999px;cursor:pointer;
+  font-size:14px;text-transform:uppercase;font-weight:600;transition:.15s;
+  box-shadow:0 3px 0 rgba(0,0,0,.12);
+}
+.tab:hover{transform:translateY(-1px)}
+.tab.active{background:#fff;color:var(--grape);box-shadow:0 3px 0 var(--grape)}
+
+main{padding:20px;max-width:1500px;margin:0 auto}
+.view{display:none}
+.view.active{display:block}
+
+/* Oharrak */
+.notice{
+  border:1px solid var(--line);border-left:5px solid var(--blue);
+  background:rgba(46,197,255,.10);border-radius:12px;padding:12px 16px;
+  font-size:13.5px;color:var(--ink);margin-bottom:18px;line-height:1.55;
+}
+.notice.green{border-left-color:var(--green);background:var(--green-dim)}
+.notice.danger{border-left-color:var(--danger);background:rgba(255,77,109,.12)}
+
+/* Goiko kontrolak */
+.toolbar{display:flex;gap:12px;align-items:flex-end;flex-wrap:wrap;margin-bottom:18px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.field input{
+  background:#fff;border:2px solid var(--line2);color:var(--ink);
+  border-radius:11px;padding:11px 13px;font-size:15px;min-width:240px;font-family:'Inter',sans-serif;
+}
+.field input:focus{outline:none;border-color:var(--grape)}
+.btn{
+  appearance:none;border:none;border-radius:11px;padding:12px 22px;cursor:pointer;
+  font-size:15px;font-weight:600;text-transform:uppercase;transition:.15s;
+  box-shadow:0 4px 0 rgba(0,0,0,.16);
+}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 rgba(0,0,0,.16)}
+.btn-primary{background:var(--green);color:#06291b}
+.btn-primary:hover{filter:brightness(1.05)}
+.btn-ghost{background:#fff;color:var(--ink);box-shadow:0 4px 0 var(--line2)}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+
+/* Koadroa (bracket) */
+.bracket-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:12px}
+.bracket{display:flex;gap:26px;min-width:min-content;align-items:stretch}
+.round{display:flex;flex-direction:column;justify-content:space-around;min-width:208px}
+.round-name{
+  text-transform:uppercase;font-size:13px;font-weight:600;color:#fff;
+  letter-spacing:.06em;text-align:center;margin-bottom:10px;padding:5px 8px;border-radius:999px;
+}
+.round-name.r0{background:var(--red)}
+.round-name.r1{background:var(--orange)}
+.round-name.r2{background:var(--blue)}
+.round-name.r3{background:var(--grape)}
+.round-name.rf{background:var(--green)}
+.round-name.r3p{background:var(--pink)}
+.match{
+  background:var(--surface);border:1px solid var(--line);border-radius:13px;
+  overflow:hidden;margin:9px 0;box-shadow:0 6px 16px rgba(42,31,55,.10);
+}
+.slot{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;cursor:pointer;
+  border-left:4px solid transparent;transition:.12s;min-height:44px;
+}
+.slot + .slot{border-top:1px solid var(--line)}
+.slot:hover{background:rgba(139,92,246,.06)}
+.slot.sel{background:var(--green-dim);border-left-color:var(--green)}
+.slot.sel .name{color:var(--ink);font-weight:700}
+.slot.sel::after{content:"✓";margin-left:auto;color:var(--green);font-weight:800}
+.slot.empty{cursor:default;color:var(--muted);font-style:italic}
+.slot.empty:hover{background:transparent}
+.slot.locked{cursor:default}
+.flag{width:26px;height:18px;border-radius:3px;object-fit:cover;flex:0 0 auto;background:#eee;box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+.flag.ph{visibility:hidden}
+.name{font-size:14.5px;line-height:1.15;font-weight:600;letter-spacing:.02em}
+.fullname{font-size:11px;color:var(--muted);font-weight:500;display:block;margin-top:1px;letter-spacing:0}
+
+/* Finala + podiuma */
+.final-zone{display:flex;flex-direction:column;gap:14px;justify-content:center;min-width:240px}
+.champ-card{
+  border:2px solid var(--gold);border-radius:15px;padding:16px;text-align:center;
+  background:linear-gradient(180deg, var(--gold-dim), #fff);
+}
+.champ-card .lbl{text-transform:uppercase;letter-spacing:.1em;color:#a9760a;font-size:13px;font-weight:600}
+.champ-card .who{display:flex;align-items:center;gap:10px;justify-content:center;margin-top:10px;font-family:'Fredoka';font-size:24px;font-weight:600}
+.champ-card .who.empty{color:var(--muted);font-size:15px;font-style:italic}
+
+.podium{margin-top:24px;border-top:2px dashed var(--line2);padding-top:18px}
+.podium h3{margin:0 0 12px;font-size:17px;text-transform:uppercase;color:var(--grape);letter-spacing:.04em}
+.podium-row{display:flex;align-items:center;gap:12px;padding:10px 14px;border-radius:12px;background:#fff;margin-bottom:8px;border:1px solid var(--line)}
+.podium-row .pos{font-size:20px;width:30px;font-weight:700}
+.podium-row .pos.p1{color:var(--gold)}.podium-row .pos.p2{color:#9aa3b2}.podium-row .pos.p3{color:#cd7f32}.podium-row .pos.p4{color:var(--muted)}
+.podium-row .name{font-size:16px;font-weight:600}
+.podium-row.empty .name{color:var(--muted);font-style:italic;font-weight:500}
+
+/* Sailkapena */
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:12.5px;color:var(--muted);margin:0 0 16px;line-height:1.5}
+.legend b{color:var(--ink)}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:680px;font-size:14px}
+th,td{padding:11px 12px;text-align:left;border-bottom:1px solid var(--line)}
+th{font-family:'Fredoka';text-transform:uppercase;font-size:12px;letter-spacing:.03em;color:var(--muted);font-weight:600;white-space:nowrap}
+td.center,th.center{text-align:center}
+td.total{font-family:'Fredoka';font-weight:700;font-size:17px;color:var(--grape);text-align:center}
+.hit{color:var(--green);font-weight:700}
+.pts{color:var(--ink);font-weight:600}
+.pts.zero{color:var(--muted);font-weight:400}
+tr.rank1{background:linear-gradient(90deg, var(--gold-dim), transparent)}
+tr.rank1 td:first-child{border-left:4px solid var(--gold)}
+.cell-team{display:flex;align-items:center;gap:8px}
+.subpick{font-size:11px;color:var(--muted);display:block;margin-top:2px}
+.subpick .ok{color:var(--green);font-weight:700}
+.subpick .ko{color:var(--danger);font-weight:700}
+.lolly{vertical-align:middle;margin-right:1px;filter:drop-shadow(0 2px 2px rgba(0,0,0,.15))}
+.prize-cell{white-space:nowrap}
+
+.result-banner{
+  border-radius:14px;padding:18px 20px;margin:6px 0 18px;border:2px solid var(--line);
+  font-family:'Fredoka';font-size:21px;font-weight:600;display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+}
+.result-banner.win{background:var(--gold-dim);border-color:var(--gold)}
+.result-banner.tie{background:rgba(46,197,255,.14);border-color:var(--blue)}
+.result-banner.pending{background:#fff;border-color:var(--line2)}
+.result-banner small{font-family:'Inter';font-weight:500;font-size:13px;color:var(--muted);display:block;margin-top:4px}
+.empty-state{color:var(--muted);text-align:center;padding:40px 20px;font-size:15px}
+
+/* Verja del PIN (admin) */
+.gate{display:flex;justify-content:center;padding:30px 16px}
+.gate-card{
+  background:#fff;border:1px solid var(--line);border-radius:18px;
+  box-shadow:0 10px 30px rgba(42,31,55,.12);padding:28px 26px;max-width:380px;width:100%;text-align:center;
+}
+.gate-lock{font-size:40px;line-height:1;margin-bottom:6px}
+.gate-card h2{margin:0 0 6px;font-size:22px}
+.gate-card p{margin:0 0 16px;color:var(--muted);font-size:14px}
+.gate-row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.gate-row input{
+  background:#fff;border:2px solid var(--line2);color:var(--ink);border-radius:11px;
+  padding:11px 14px;font-size:18px;width:140px;text-align:center;letter-spacing:.3em;font-family:'Inter',sans-serif;
+}
+.gate-row input:focus{outline:none;border-color:var(--grape)}
+#pin-msg{margin-top:14px}
+#pin-msg .notice{margin-bottom:0;text-align:left}
+
+footer{color:var(--muted);font-size:12px;text-align:center;padding:28px 20px;border-top:1px solid var(--line);margin-top:30px}
+
+@media (max-width:640px){
+  .brand h1{font-size:25px}
+  main{padding:14px}
+  .field input{min-width:0;width:100%}
+  .field{flex:1 1 100%}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">
+    <h1>Munduko Kopako Porra</h1>
+    <span class="sub">Kanporaketa fasea · 32 selekzio · hamaseirenetatik finalera</span>
+  </div>
+  <nav>
+    <button class="tab active" data-view="pronostico">Nire iragarpena</button>
+    <button class="tab" data-view="resultados">Emaitzak (admin)</button>
+    <button class="tab" data-view="clasificacion">Sailkapena</button>
+  </nav>
+</header>
+
+<main>
+  <!-- ===================== NIRE IRAGARPENA ===================== -->
+  <section class="view active" id="view-pronostico">
+    <div id="mode-notice"></div>
+    <div class="toolbar">
+      <div class="field">
+        <label for="nombre">Zure izena</label>
+        <input id="nombre" placeholder="Adib. Aitor" autocomplete="off">
+      </div>
+      <button class="btn btn-primary" id="btn-guardar">Gorde nire iragarpena</button>
+      <button class="btn btn-ghost" id="btn-limpiar">Hustu koadroa</button>
+    </div>
+    <div id="pron-msg"></div>
+    <div class="bracket-wrap"><div class="bracket" id="bracket-pron"></div></div>
+    <div class="podium" id="podium-pron"></div>
+  </section>
+
+  <!-- ===================== EMAITZAK (ADMIN) ===================== -->
+  <section class="view" id="view-resultados">
+    <!-- Verja del PIN: oculta el contenido de admin hasta introducir el PIN -->
+    <div id="admin-gate" class="gate">
+      <div class="gate-card">
+        <div class="gate-lock">🔒</div>
+        <h2>Administratzaile-gunea</h2>
+        <p>Sartu PINa benetako emaitzak editatzeko.</p>
+        <div class="gate-row">
+          <input id="admin-pin" type="password" inputmode="numeric" maxlength="6" placeholder="PINa" autocomplete="off">
+          <button class="btn btn-primary" id="btn-pin">Sartu</button>
+        </div>
+        <div id="pin-msg"></div>
+      </div>
+    </div>
+    <!-- Contenido real de admin (oculto hasta desbloquear) -->
+    <div id="admin-content" style="display:none">
+      <div class="notice">
+        Administratzailearen gunea. Sartu hemen <b>benetako emaitzak</b> txapelketak aurrera egin ahala,
+        iragarpen bat balitz bezala: sakatu erronda bakoitza gainditzen duen selekzioa. Irabazlea hurrengo
+        txertora pasatzen da automatikoki. Gorde nahi duzunean; berriz editatu dezakezu.
+      </div>
+      <div class="toolbar">
+        <button class="btn btn-primary" id="btn-guardar-res">Gorde emaitzak</button>
+        <button class="btn btn-ghost" id="btn-limpiar-res">Hustu emaitzak</button>
+      </div>
+      <div id="res-msg"></div>
+      <div class="bracket-wrap"><div class="bracket" id="bracket-res"></div></div>
+      <div class="podium" id="podium-res"></div>
+    </div>
+  </section>
+
+  <!-- ===================== SAILKAPENA ===================== -->
+  <section class="view" id="view-clasificacion">
+    <div class="legend">
+      <span><b>Puntuak:</b> hamaseirenak 1 · zortzirenak 2 · final-laurdenak 4 · finalaurrekoak 8 · txapelduna 16 · 3.a 10. Hurrengo errondara pasatzen den selekzio asmatu bakoitzeko.</span>
+      <span><b>Sariak:</b> 🥇 hiru txupatxup · 🥈 bi txupatxup · 🥉 txupatxup bat</span>
+    </div>
+    <div class="toolbar">
+      <button class="btn btn-primary" id="btn-actualizar">Eguneratu sailkapena</button>
+    </div>
+    <div id="clasif-content">
+      <div class="empty-state">Sakatu «Eguneratu sailkapena» emaitza ikusteko.</div>
+    </div>
+  </section>
+</main>
+
+<footer>Munduko Kopako Porra · 2026</footer>
+
+<script>
+/* ============================================================
+   1) KONFIGURAZIOA — ITSATSI HEMEN ZURE APPS SCRIPT-EKO URLa
+   ------------------------------------------------------------
+   Hutsik dagoen bitartean, modu lokalean dabil (memorian, fitxa
+   honetan soilik; ez da gordetzen birkargatzean). URLarekin,
+   zure Google Sheet-ean gordetzen eta irakurtzen du.
+   ============================================================ */
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzcGZXUYcrFDpFpwEfbjVr37ijspNfPVO5t1pgbPjtLvM-EMJE8Zog3cQCpc9brLslxFQ/exec";
+
+/* ------------------------------------------------------------
+   PINa: emaitzak (admin) editatzeko behar den kodea.
+   Aldatu nahi baduzu, jarri beste zenbaki bat hemen.
+   OHARRA: babes hau nabigatzailean dago; lagunarteko porra
+   baterako nahikoa, baina ez da segurtasun gogorra.
+   ------------------------------------------------------------ */
+const ADMIN_PIN = "6666";
+
+/* ============================================================
+   2) KOADROAREN DATUAK — Munduko Kopa 2026, benetako hamaseirenak
+   ------------------------------------------------------------
+   Selekzioak gurutzaketa-ordenan. Izena = FIFAren 3 letrako kodea.
+   'code' = banderaren kodea (flagcdn). Iturria: FIFA / Wikipedia
+   (2026ko Munduko Kopako kanporaketa-fasea), taldeen faseko amaiera.
+   ============================================================ */
+const TEAMS = [
+  // R16 92 goia -> QF97 -> SF101 (goiko erdia)
+  {fifa:'GER', code:'de',     name:'Alemania'},   {fifa:'PAR', code:'py',     name:'Paraguai'},
+  {fifa:'FRA', code:'fr',     name:'Frantzia'},   {fifa:'SWE', code:'se',     name:'Suedia'},
+  {fifa:'RSA', code:'za',     name:'Hego Afrika'},{fifa:'CAN', code:'ca',     name:'Kanada'},
+  {fifa:'NED', code:'nl',     name:'Herbehereak'},{fifa:'MAR', code:'ma',     name:'Maroko'},
+  {fifa:'POR', code:'pt',     name:'Portugal'},   {fifa:'CRO', code:'hr',     name:'Kroazia'},
+  {fifa:'ESP', code:'es',     name:'Espainia'},   {fifa:'AUT', code:'at',     name:'Austria'},
+  {fifa:'USA', code:'us',     name:'AEB'},        {fifa:'BIH', code:'ba',     name:'Bosnia-Herz.'},
+  {fifa:'BEL', code:'be',     name:'Belgika'},    {fifa:'SEN', code:'sn',     name:'Senegal'},
+  // beheko erdia -> SF102
+  {fifa:'BRA', code:'br',     name:'Brasil'},     {fifa:'JPN', code:'jp',     name:'Japonia'},
+  {fifa:'CIV', code:'ci',     name:'Boli Kosta'}, {fifa:'NOR', code:'no',     name:'Norvegia'},
+  {fifa:'MEX', code:'mx',     name:'Mexiko'},     {fifa:'ECU', code:'ec',     name:'Ekuador'},
+  {fifa:'ENG', code:'gb-eng', name:'Ingalaterra'},{fifa:'COD', code:'cd',     name:'Kongoko ED'},
+  {fifa:'ARG', code:'ar',     name:'Argentina'},  {fifa:'CPV', code:'cv',     name:'Cabo Verde'},
+  {fifa:'AUS', code:'au',     name:'Australia'},  {fifa:'EGY', code:'eg',     name:'Egipto'},
+  {fifa:'SUI', code:'ch',     name:'Suitza'},     {fifa:'ALG', code:'dz',     name:'Aljeria'},
+  {fifa:'COL', code:'co',     name:'Kolonbia'},   {fifa:'GHA', code:'gh',     name:'Ghana'},
+];
+const ROUND_NAMES   = ['Hamaseirenak','Zortzirenak','Final-laurdenak','Finalaurrekoak','Finala'];
+const ROUND_COUNTS  = [16,8,4,2,1];
+const ROUND_POINTS  = [1,2,4,8];   // r0..r3 erronda bakoitzeko asmatze bakoitza
+const CHAMP_POINTS  = 16;
+const THIRD_POINTS  = 10;
+
+const FIFA_BY_CODE = Object.fromEntries(TEAMS.map(t=>[t.code,t.fifa]));
+const NAME_BY_CODE = Object.fromEntries(TEAMS.map(t=>[t.code,t.name]));
+const flagURL  = c => `https://flagcdn.com/w40/${c}.png`;
+const teamCode = c => FIFA_BY_CODE[c] || '';   // bistaratzeko (FIFA 3 letra)
+const teamFull = c => NAME_BY_CODE[c] || '';
+
+/* ============================================================
+   3) KOADROAREN LOGIKA
+   ============================================================ */
+function teamsOfMatch(r,i,picks){
+  if(r===0) return [TEAMS[2*i].code, TEAMS[2*i+1].code];
+  return [ picks['r'+(r-1)+'m'+(2*i)]||null, picks['r'+(r-1)+'m'+(2*i+1)]||null ];
+}
+// Gora aldatzean baliogabetzen diren hautaketak kentzen ditu.
+function cleanup(picks){
+  let changed=true;
+  while(changed){
+    changed=false;
+    for(let r=1;r<5;r++){
+      for(let i=0;i<ROUND_COUNTS[r];i++){
+        const key='r'+r+'m'+i, w=picks[key];
+        if(w){ const [a,b]=teamsOfMatch(r,i,picks); if(w!==a&&w!==b){delete picks[key];changed=true;} }
+      }
+    }
+    const tp = thirdPlaceTeams(picks);
+    if(picks['third'] && tp.indexOf(picks['third'])===-1){ delete picks['third']; changed=true; }
+  }
+}
+function thirdPlaceTeams(picks){
+  const out=[];
+  for(let i=0;i<2;i++){
+    const [a,b]=teamsOfMatch(3,i,picks); const w=picks['r3m'+i];
+    if(a&&b&&w) out.push(w===a?b:a); else out.push(null);
+  }
+  return out;
+}
+// {first,second,third,fourth} kodeekin edo null oraindik zehaztu gabe badago.
+function computePositions(picks){
+  const champ = picks['r4m0']||null;
+  const [fa,fb]=teamsOfMatch(4,0,picks);
+  const second = (champ&&fa&&fb)?(champ===fa?fb:fa):null;
+  const [la,lb]=thirdPlaceTeams(picks);
+  const tw = picks['third']||null;
+  let third=null, fourth=null;
+  if(la&&lb&&tw){ third=tw; fourth=(tw===la?lb:la); }
+  return {first:champ, second, third, fourth};
+}
+
+/* ============================================================
+   4) KOADROAREN MARRAZKETA
+   ============================================================ */
+function slotEl(code, selected, editable, onPick){
+  const d=document.createElement('div');
+  d.className='slot'+(code?'':' empty')+(selected?' sel':'')+(editable&&code?'':' locked');
+  if(!code){ d.innerHTML='<span class="flag ph"></span><span class="name">Zehazteke</span>'; return d; }
+  const img=document.createElement('img'); img.className='flag'; img.src=flagURL(code); img.alt='';
+  img.onerror=()=>{img.style.visibility='hidden';};
+  const box=document.createElement('span');
+  box.innerHTML='<span class="name">'+teamCode(code)+'</span><span class="fullname">'+teamFull(code)+'</span>';
+  d.title=teamFull(code);
+  d.appendChild(img); d.appendChild(box);
+  if(editable && code && onPick) d.onclick=()=>onPick(code);
+  return d;
+}
+function renderBracket(container, picks, editable, onChange){
+  container.innerHTML='';
+  const pickAndRefresh=(key,code)=>{ picks[key]=code; cleanup(picks); onChange(); };
+  const cls=['r0','r1','r2','r3'];
+  for(let r=0;r<4;r++){
+    const col=document.createElement('div'); col.className='round';
+    const head=document.createElement('div'); head.className='round-name '+cls[r]; head.textContent=ROUND_NAMES[r]; col.appendChild(head);
+    for(let i=0;i<ROUND_COUNTS[r];i++){
+      const [a,b]=teamsOfMatch(r,i,picks); const w=picks['r'+r+'m'+i];
+      const m=document.createElement('div'); m.className='match';
+      m.appendChild(slotEl(a, w===a, editable, c=>pickAndRefresh('r'+r+'m'+i,c)));
+      m.appendChild(slotEl(b, w===b, editable, c=>pickAndRefresh('r'+r+'m'+i,c)));
+      col.appendChild(m);
+    }
+    container.appendChild(col);
+  }
+  // Finala + 3. postua + txapelduna
+  const fz=document.createElement('div'); fz.className='final-zone';
+  const fhead=document.createElement('div'); fhead.className='round-name rf'; fhead.textContent='Finala'; fz.appendChild(fhead);
+  const [fa,fb]=teamsOfMatch(4,0,picks); const fw=picks['r4m0'];
+  const fm=document.createElement('div'); fm.className='match';
+  fm.appendChild(slotEl(fa, fw===fa, editable, c=>pickAndRefresh('r4m0',c)));
+  fm.appendChild(slotEl(fb, fw===fb, editable, c=>pickAndRefresh('r4m0',c)));
+  fz.appendChild(fm);
+  const cc=document.createElement('div'); cc.className='champ-card';
+  cc.innerHTML='<div class="lbl">Txapelduna</div>';
+  const who=document.createElement('div');
+  if(fw){ who.className='who'; who.innerHTML='<img class="flag" src="'+flagURL(fw)+'" alt="">'+teamCode(fw); }
+  else { who.className='who empty'; who.textContent='Erabakitzeke'; }
+  cc.appendChild(who); fz.appendChild(cc);
+  const tpHead=document.createElement('div'); tpHead.className='round-name r3p'; tpHead.textContent='3. eta 4. postua'; fz.appendChild(tpHead);
+  const [la,lb]=thirdPlaceTeams(picks); const tw=picks['third'];
+  const tpm=document.createElement('div'); tpm.className='match';
+  tpm.appendChild(slotEl(la, tw===la, editable, c=>pickAndRefresh('third',c)));
+  tpm.appendChild(slotEl(lb, tw===lb, editable, c=>pickAndRefresh('third',c)));
+  fz.appendChild(tpm);
+  container.appendChild(fz);
+}
+function renderPodium(target, picks){
+  const p=computePositions(picks);
+  const rows=[['1.','first','p1'],['2.','second','p2'],['3.','third','p3'],['4.','fourth','p4']];
+  let html='<h3>Zure podiuma</h3>';
+  for(const [lbl,key,cls] of rows){
+    const code=p[key];
+    html+='<div class="podium-row'+(code?'':' empty')+'"><span class="pos '+cls+'">'+lbl+'</span>';
+    html+= code ? '<img class="flag" src="'+flagURL(code)+'" alt=""><span class="name">'+teamCode(code)+' · '+teamFull(code)+'</span>' : '<span class="name">Zehazteke</span>';
+    html+='</div>';
+  }
+  target.innerHTML=html;
+}
+
+/* ============================================================
+   5) BILTEGIRATZEA (Apps Script edo lokala memorian)
+   ============================================================ */
+const remote = !!APPS_SCRIPT_URL;
+let localStore = { predicciones:[], resultado:{} };
+
+async function apiGet(){
+  if(!remote) return JSON.parse(JSON.stringify(localStore));
+  const r=await fetch(APPS_SCRIPT_URL,{method:'GET'});
+  return await r.json();
+}
+async function apiPost(payload){
+  if(!remote){
+    if(payload.tipo==='prediccion'){
+      const i=localStore.predicciones.findIndex(p=>p.nombre.toLowerCase()===payload.nombre.toLowerCase());
+      const row={nombre:payload.nombre,picks:payload.picks,ts:new Date().toISOString()};
+      if(i>=0) localStore.predicciones[i]=row; else localStore.predicciones.push(row);
+    } else if(payload.tipo==='resultado'){ localStore.resultado={picks:payload.picks}; }
+    return {ok:true};
+  }
+  const r=await fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(payload)});
+  return await r.json();
+}
+
+/* ============================================================
+   6) PUNTUAZIOA — erronda bakoitzeko asmatzeak
+   ------------------------------------------------------------
+   Erronda bakoitzean: hautatutako irabazlea = benetako irabazlea
+   bada, erronda horretako puntuak. Txapelduna eta 3. postua aparte.
+   ============================================================ */
+function scoreOf(picks, real){
+  const counts=[0,0,0,0]; const ptsByRound=[0,0,0,0];
+  for(let r=0;r<4;r++){
+    for(let i=0;i<ROUND_COUNTS[r];i++){
+      const key='r'+r+'m'+i;
+      if(picks[key] && real[key] && picks[key]===real[key]) counts[r]++;
+    }
+    ptsByRound[r]=counts[r]*ROUND_POINTS[r];
+  }
+  const champPick=picks['r4m0']||null, champReal=real['r4m0']||null;
+  const champHit = !!(champPick && champReal && champPick===champReal);
+  const thirdPick=picks['third']||null, thirdReal=real['third']||null;
+  const thirdHit = !!(thirdPick && thirdReal && thirdPick===thirdReal);
+  const champPts = champHit?CHAMP_POINTS:0;
+  const thirdPts = thirdHit?THIRD_POINTS:0;
+  const total = ptsByRound.reduce((a,b)=>a+b,0) + champPts + thirdPts;
+  return {counts, ptsByRound, champPick, champHit, champPts, thirdHit, thirdPts, total};
+}
+
+function buildStandings(preds, real){
+  const rows=preds.map(p=>Object.assign({nombre:p.nombre}, scoreOf(p.picks||{}, real)));
+  rows.sort((a,b)=> b.total-a.total || a.nombre.localeCompare(b.nombre,'eu'));
+  rows.forEach(r=>{ r.rank = 1 + rows.filter(x=>x.total>r.total).length; });
+  return rows;
+}
+
+/* Txupatxup-aren SVGa (kolore biziko haize-errota) */
+function txupatxupSVG(size){
+  const s=size||20, cx=12, cy=11, r=10;
+  const cols=['#ff4d6d','#ff922b','#ffd43b','#19c37d','#2ec5ff','#4dabf7','#8b5cf6','#ff5fa2'];
+  let wedges='';
+  for(let k=0;k<8;k++){
+    const a0=(k/8)*2*Math.PI - Math.PI/2, a1=((k+1)/8)*2*Math.PI - Math.PI/2;
+    const x0=(cx+r*Math.cos(a0)).toFixed(2), y0=(cy+r*Math.sin(a0)).toFixed(2);
+    const x1=(cx+r*Math.cos(a1)).toFixed(2), y1=(cy+r*Math.sin(a1)).toFixed(2);
+    wedges+='<path d="M'+cx+' '+cy+' L'+x0+' '+y0+' A'+r+' '+r+' 0 0 1 '+x1+' '+y1+' Z" fill="'+cols[k]+'"/>';
+  }
+  return '<svg class="lolly" width="'+s+'" height="'+(s*1.5)+'" viewBox="0 0 24 36" aria-hidden="true">'
+    +'<rect x="11" y="11" width="2" height="23" rx="1" fill="#e9c39b"/>'
+    +'<circle cx="12" cy="11" r="10.5" fill="#fff"/>'+wedges
+    +'<circle cx="12" cy="11" r="10" fill="none" stroke="rgba(0,0,0,.08)"/>'
+    +'<ellipse cx="8.3" cy="7.4" rx="3" ry="2" fill="rgba(255,255,255,.55)"/></svg>';
+}
+const PRIZE = {1:{n:3,txt:'Hiru txupatxup'},2:{n:2,txt:'Bi txupatxup'},3:{n:1,txt:'Txupatxup bat'}};
+function prizeCell(rank){
+  const p=PRIZE[rank]; if(!p) return '<span class="pts zero">—</span>';
+  let s=''; for(let i=0;i<p.n;i++) s+=txupatxupSVG(20);
+  return '<span class="prize-cell" title="'+p.txt+'">'+s+'</span>';
+}
+
+/* ============================================================
+   7) UI / GERTAERAK
+   ============================================================ */
+const pronPicks={}, resPicks={};
+const $=id=>document.getElementById(id);
+const refreshPron=()=>{ renderBracket($('bracket-pron'),pronPicks,true,refreshPron); renderPodium($('podium-pron'),pronPicks); };
+const refreshRes =()=>{ renderBracket($('bracket-res'),resPicks,true,refreshRes); renderPodium($('podium-res'),resPicks); };
+
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+  t.classList.add('active'); $('view-'+t.dataset.view).classList.add('active');
+  if(t.dataset.view==='clasificacion') actualizar();
+});
+
+$('mode-notice').innerHTML = remote
+  ? '<div class="notice green">Zure Google Sheet-era konektatuta. Iragarpenak benetan gordetzen eta partekatzen dira.</div>'
+  : '<div class="notice">Probako modu lokala: oraindik ez duzu Apps Script-eko URLa jarri. Fluxu osoa probatu dezakezu fitxa honetan, baina <b>ez da gordetzen</b> orria birkargatzean. Benetako erabilerarako, itsatsi URLa <b>APPS_SCRIPT_URL</b> aldagaian.</div>';
+
+function msg(el,text,type){ el.innerHTML = text? '<div class="notice '+(type||'')+'">'+text+'</div>':''; }
+function isComplete(picks){
+  for(let r=0;r<5;r++) for(let i=0;i<ROUND_COUNTS[r];i++) if(!picks['r'+r+'m'+i]) return false;
+  return !!picks['third'];
+}
+
+$('btn-guardar').onclick=async()=>{
+  const nombre=$('nombre').value.trim();
+  if(!nombre){ return msg($('pron-msg'),'Idatzi zure izena gorde aurretik.','danger'); }
+  if(!isComplete(pronPicks)){ return msg($('pron-msg'),'Bete koadro osoa, finala eta 3. postuko partida barne.','danger'); }
+  $('btn-guardar').disabled=true;
+  try{
+    await apiPost({tipo:'prediccion',nombre,picks:pronPicks});
+    msg($('pron-msg'),'<b>'+nombre+'</b> · iragarpena gordeta.','green');
+  }catch(e){ msg($('pron-msg'),'Ezin izan da gorde. Egiaztatu konexioa edo Apps Script-eko URLa.','danger'); }
+  $('btn-guardar').disabled=false;
+};
+$('btn-limpiar').onclick=()=>{ for(const k in pronPicks) delete pronPicks[k]; refreshPron(); msg($('pron-msg'),''); };
+
+// --- PINa: emaitzen gunea desblokeatu ---
+let adminUnlocked=false;
+function unlockAdmin(){
+  const pin=$('admin-pin').value.trim();
+  if(pin===ADMIN_PIN){
+    adminUnlocked=true;
+    $('admin-gate').style.display='none';
+    $('admin-content').style.display='block';
+    refreshRes();              // koadroa marraztu desblokeatzean
+    msg($('pin-msg'),'');
+  }else{
+    msg($('pin-msg'),'PIN okerra.','danger');
+    $('admin-pin').value=''; $('admin-pin').focus();
+  }
+}
+$('btn-pin').onclick=unlockAdmin;
+$('admin-pin').addEventListener('keydown',e=>{ if(e.key==='Enter') unlockAdmin(); });
+
+$('btn-guardar-res').onclick=async()=>{
+  $('btn-guardar-res').disabled=true;
+  try{ await apiPost({tipo:'resultado',picks:resPicks}); msg($('res-msg'),'Benetako emaitzak gordeta.','green'); }
+  catch(e){ msg($('res-msg'),'Ezin izan dira emaitzak gorde.','danger'); }
+  $('btn-guardar-res').disabled=false;
+};
+$('btn-limpiar-res').onclick=()=>{ for(const k in resPicks) delete resPicks[k]; refreshRes(); msg($('res-msg'),''); };
+
+async function actualizar(){
+  const box=$('clasif-content');
+  box.innerHTML='<div class="empty-state">Kalkulatzen…</div>';
+  let data;
+  try{ data=await apiGet(); }catch(e){ box.innerHTML='<div class="notice danger">Ezin izan dira datuak irakurri.</div>'; return; }
+  const preds=(data.predicciones||[]);
+  const real=(data.resultado&&data.resultado.picks)||{};
+  if(preds.length===0){ box.innerHTML='<div class="empty-state">Oraindik ez dago iragarpenik gordeta.</div>'; return; }
+
+  const rows=buildStandings(preds, real);
+  const realCount=Object.keys(real).filter(k=>real[k]).length;
+  const allKnown = !!(real['r4m0'] && real['third']);
+  const champReal = real['r4m0']||null;
+
+  // Goiburuko bannerra
+  let html='';
+  if(realCount===0){
+    html+='<div class="result-banner pending"><div>Oraindik ez da benetako emaitzarik sartu<small>Sailkapena behin-behinekoa da. Administratzaileak emaitzak sartu ahala eguneratuko da.</small></div></div>';
+  } else {
+    const leaders=rows.filter(r=>r.rank===1);
+    const top=rows[0].total;
+    if(leaders.length===1){
+      html+='<div class="result-banner win"><div>🏆 Liderra: '+leaders[0].nombre+'<small>'+top+' puntu'+(allKnown?'':' · behin-behinekoa, alda daiteke')+'</small></div></div>';
+    } else {
+      html+='<div class="result-banner tie"><div>🏆 Liderrak berdinduta<small>'+leaders.map(l=>l.nombre).join(', ')+' · '+top+' puntu'+(allKnown?'':' · behin-behinekoa')+'</small></div></div>';
+    }
+  }
+
+  // Taula
+  const champCol = champReal ? ('<img class="flag" src="'+flagURL(champReal)+'" alt="">'+teamCode(champReal)) : '—';
+  html+='<div class="table-wrap"><table><thead><tr>'
+      + '<th class="center">#</th><th>Partaidea</th>'
+      + '<th class="center">16renak<br>(×1)</th><th class="center">8renak<br>(×2)</th>'
+      + '<th class="center">Laurd.<br>(×4)</th><th class="center">F.aurr.<br>(×8)</th>'
+      + '<th class="center">Txapeld.<br>(16)</th><th class="center">3.a<br>(10)</th>'
+      + '<th class="center">Guztira</th><th class="center">Saria</th></tr></thead><tbody>';
+
+  for(const r of rows){
+    const cls=r.rank===1?' class="rank1"':'';
+    const cell=(v)=> '<td class="center '+(v>0?'pts':'pts zero')+'">'+(v>0?v:'—')+'</td>';
+    // iragarritako txapelduna (azpilerro txikia izenaren azpian)
+    let sub='';
+    if(r.champPick){
+      const mark = champReal ? (r.champHit?' <span class="ok">✓</span>':' <span class="ko">✗</span>') : '';
+      sub='<span class="subpick">Txapeld.: '+teamCode(r.champPick)+mark+'</span>';
+    }
+    html+='<tr'+cls+'>'
+      + '<td class="center"><b>'+r.rank+'</b></td>'
+      + '<td>'+r.nombre+sub+'</td>'
+      + cell(r.ptsByRound[0])+cell(r.ptsByRound[1])+cell(r.ptsByRound[2])+cell(r.ptsByRound[3])
+      + cell(r.champPts)+cell(r.thirdPts)
+      + '<td class="total">'+r.total+'</td>'
+      + '<td class="center">'+prizeCell(r.rank)+'</td>'
+      + '</tr>';
+  }
+  html+='</tbody></table></div>';
+  if(champReal){
+    html+='<div class="legend" style="margin-top:12px"><span><b>Benetako txapelduna:</b> '+champCol+(real['third']?(' · <b>3.a:</b> <img class="flag" src="'+flagURL(real['third'])+'" alt="">'+teamCode(real['third'])):'')+'</span></div>';
+  }
+  box.innerHTML=html;
+}
+$('btn-actualizar').onclick=actualizar;
+
+// Hasiera (emaitzen koadroa desblokeatzean marrazten da)
+refreshPron();
+</script>
+</body>
+</html>
